@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DreamNova — WA Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --gold: #D4AF37;
+      --dark: #0a0a0a;
+      --surface: #111111;
+      --border: #222222;
+    }
+    body { background: var(--dark); color: #e5e5e5; font-family: 'Segoe UI', sans-serif; }
+    .gold { color: var(--gold); }
+    .btn-gold {
+      background: var(--gold); color: #000; font-weight: 700;
+      padding: 8px 20px; border-radius: 8px; cursor: pointer; border: none;
+      transition: opacity .2s;
+    }
+    .btn-gold:hover { opacity: .85; }
+    .btn-outline {
+      border: 1px solid var(--gold); color: var(--gold); background: transparent;
+      padding: 8px 20px; border-radius: 8px; cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-outline:hover { background: var(--gold); color: #000; }
+    .tab { cursor: pointer; padding: 10px 20px; border-radius: 8px 8px 0 0; font-weight: 600; transition: all .2s; }
+    .tab.active { background: var(--gold); color: #000; }
+    .tab:not(.active) { color: #888; }
+    .tab:not(.active):hover { color: var(--gold); }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .msg-box {
+      background: #0d0d0d; border: 1px solid #333; border-radius: 8px;
+      padding: 16px; font-size: 14px; line-height: 1.7; white-space: pre-wrap;
+      font-family: 'Segoe UI', sans-serif; color: #ddd; max-height: 300px; overflow-y: auto;
+    }
+    .status-badge {
+      display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    }
+    .badge-green { background: #14532d; color: #4ade80; }
+    .badge-yellow { background: #422006; color: #fbbf24; }
+    .badge-blue { background: #1e3a5f; color: #60a5fa; }
+    .section-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #666; margin-bottom: 8px; }
+    textarea { background: #0d0d0d; border: 1px solid #333; border-radius: 8px; color: #ddd; padding: 12px; width: 100%; resize: vertical; font-size: 14px; line-height: 1.7; }
+    input[type="text"] { background: #0d0d0d; border: 1px solid #333; border-radius: 8px; color: #ddd; padding: 10px 14px; width: 100%; font-size: 14px; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #111; } ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+    .rtl { direction: rtl; font-size: 15px; }
+    .grok-section { border-left: 3px solid var(--gold); padding-left: 16px; margin-bottom: 20px; }
+    .update-log { border-left: 2px solid #333; padding-left: 12px; }
+    .update-entry { margin-bottom: 12px; }
+    .update-date { font-size: 11px; color: #666; }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- HEADER -->
+  <div class="border-b border-gray-800 px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="text-2xl font-black gold">DreamNova</div>
+      <div class="text-gray-500 text-sm">WA Hub — Coordination Campagnes</div>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="status-badge badge-green">2 campagnes actives</span>
+      <span class="text-gray-600 text-xs">Mis à jour: <span id="lastUpdate">23 Fév 2026</span></span>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="px-6 pt-4 flex gap-2 border-b border-gray-800">
+    <div class="tab active" onclick="showTab('dashboard')">📊 Dashboard</div>
+    <div class="tab" onclick="showTab('aide')">🤝 Aide Familiale</div>
+    <div class="tab" onclick="showTab('nanah')">🔥 Nanah Coin</div>
+    <div class="tab" onclick="showTab('grok')">🤖 Grok Brief</div>
+  </div>
+
+  <div class="px-6 py-6 max-w-5xl mx-auto">
+
+    <!-- ===== DASHBOARD ===== -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="card text-center">
+          <div class="text-3xl font-black gold">88</div>
+          <div class="text-gray-500 text-sm mt-1">Contacts totaux</div>
+          <div class="text-xs text-gray-600 mt-1">30 FR + 58 HE</div>
+        </div>
+        <div class="card text-center">
+          <div class="text-3xl font-black" style="color:#60a5fa">2</div>
+          <div class="text-gray-500 text-sm mt-1">Campagnes WA</div>
+          <div class="text-xs text-gray-600 mt-1">Aide + Nanah Coin</div>
+        </div>
+        <div class="card text-center">
+          <div class="text-3xl font-black" style="color:#4ade80">0</div>
+          <div class="text-gray-500 text-sm mt-1">Réponses reçues</div>
+          <div class="text-xs text-gray-600 mt-1">Mettre à jour ici</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Aide Financière Card -->
+        <div class="card">
+          <div class="flex items-center justify-between mb-3">
+            <div class="font-bold">🤝 Aide Familiale</div>
+            <span class="status-badge badge-yellow">En attente envoi</span>
+          </div>
+          <div class="text-sm text-gray-400 mb-3">88 messages individuels pré-générés. Signer en tant que <strong class="text-white">Israël</strong>. Compte WA dédié.</div>
+          <div class="text-xs text-gray-600 mb-2">Fichiers :</div>
+          <div class="text-xs font-mono text-gray-500">~/Desktop/AIDES_FINANCIERES/MESSAGES/</div>
+          <div class="text-xs font-mono text-gray-500">~/Desktop/AIDES_FINANCIERES/PREVIEW_MESSAGES/</div>
+          <div class="mt-3 flex gap-2">
+            <button class="btn-gold text-xs" onclick="showTab('aide')">Voir templates</button>
+          </div>
+        </div>
+
+        <!-- Nanah Coin Card -->
+        <div class="card">
+          <div class="flex items-center justify-between mb-3">
+            <div class="font-bold">🔥 Nanah Coin</div>
+            <span class="status-badge badge-blue">Prêt à envoyer</span>
+          </div>
+          <div class="text-sm text-gray-400 mb-3">Message d'alignement spirituel + DreamNova. Signer en tant que <strong class="text-white">David</strong>. Autre compte WA.</div>
+          <div class="text-xs text-gray-600 mb-2">Fichiers :</div>
+          <div class="text-xs font-mono text-gray-500">~/Desktop/NANAHCOIN_WA/MESSAGE_FR_NANAHCOIN.md</div>
+          <div class="text-xs font-mono text-gray-500">~/Desktop/NANAHCOIN_WA/MESSAGE_HE_NANAHCOIN.md</div>
+          <div class="mt-3 flex gap-2">
+            <button class="btn-gold text-xs" onclick="showTab('nanah')">Voir templates</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RÈGLE D'OR -->
+      <div class="card mt-4 border-yellow-900">
+        <div class="gold font-bold mb-2">⚡ Règle d'or — NE PAS MÉLANGER</div>
+        <div class="grid grid-cols-2 gap-4 text-sm">
+          <div>
+            <div class="text-gray-400 mb-1">Campagne AIDE :</div>
+            <div class="text-white">→ Compte <strong>Israël</strong></div>
+            <div class="text-white">→ Groupes religieux FR/HE</div>
+            <div class="text-white">→ <strong>JAMAIS mentionner DreamNova</strong></div>
+          </div>
+          <div>
+            <div class="text-gray-400 mb-1">Campagne NANAH :</div>
+            <div class="text-white">→ Compte <strong>David</strong></div>
+            <div class="text-white">→ Groupe NANAHCOIN 🇫🇷</div>
+            <div class="text-white">→ <strong>JAMAIS demander de l'argent</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LOG DES RÉPONSES -->
+      <div class="card mt-4">
+        <div class="font-bold mb-3">📝 Log des réponses</div>
+        <textarea id="responsesLog" rows="5" placeholder="Coller ici les réponses reçues... ex: MSG_04_FR → 'intéressé, demande IBAN'&#10;MSG_07_HE → 'veut en savoir plus sur DreamNova'"></textarea>
+        <div class="flex justify-end mt-2">
+          <button class="btn-outline text-sm" onclick="saveLog()">Sauvegarder</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== AIDE FINANCIÈRE ===== -->
+    <div class="panel" id="panel-aide">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-xl font-bold">🤝 Campagne Aide Familiale</h2>
+          <div class="text-gray-500 text-sm">Signer: <strong class="text-white">Israël</strong> | Compte WA dédié (pas le compte David)</div>
+        </div>
+        <span class="status-badge badge-yellow">88 contacts</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <!-- FR -->
+        <div class="card">
+          <div class="flex items-center justify-between mb-3">
+            <div class="font-bold">🇫🇷 Version Française</div>
+            <button class="btn-gold text-xs" onclick="downloadMsg('fr_aide')">⬇ Télécharger</button>
+          </div>
+          <div class="section-title">Message court (WhatsApp)</div>
+          <div class="msg-box" id="msg-fr-aide">Shalom,
+
+Je m'appelle Israël. Je vis à Jérusalem.
+
+Je consacre mes journées à l'étude de la Torah, à la prière au Kotel et sur la tombe de Rabbi Israël — et à la diffusion des livres de Rabbi Nachman par tous les canaux possibles. Si vous souhaitez que je mentionne votre nom en prière, je le ferai avec joie.
+
+Je suis actuellement dans une période de transition — je relance un projet important, mais ma situation en Israël ne me permet pas encore de recevoir facilement des revenus depuis l'étranger.
+
+Si le cœur vous dit de me soutenir, même modestement, je vous en serai profondément reconnaissant. Ce n'est aucunement une obligation.
+
+🇧🇪 Pour la France : j'ai un IBAN belge.
+🇺🇸 Pour les États-Unis : j'ai un compte là-bas.
+🇮🇱 En Israël : j'ai également une solution.
+
+Il suffit de me répondre et je vous envoie les coordonnées.
+
+Qu'Hachem bénisse vous et vos proches. 🙏
+
+Israël — Jérusalem</div>
+        </div>
+
+        <!-- HE -->
+        <div class="card">
+          <div class="flex items-center justify-between mb-3">
+            <div class="font-bold">🇮🇱 גרסה עברית</div>
+            <button class="btn-gold text-xs" onclick="downloadMsg('he_aide')">⬇ הורד</button>
+          </div>
+          <div class="section-title">הודעה קצרה (WhatsApp)</div>
+          <div class="msg-box rtl" id="msg-he-aide">שלום,
+
+קוראים לי ישראל. אני גר בירושלים.
+
+אני מקדיש את ימַי ללימוד תורה, לתפילה בכותל ועל קברו של רבי ישראל ז"ל, ולהפצת ספרי ורבי נחמן בכל הדרכים האפשריות. אם תרצו, אשמח להזכיר את שמותיכם בתפילה.
+
+כרגע אני בתקופת מעבר — אני משיק פרויקט חשוב, אך המצב המנהלי שלי בארץ לא מאפשר לי לקבל הכנסות בצורה רגילה בינתיים.
+
+אם ליבכם נוטה לסייע לי — אפילו סכום קטן — אהיה מכיר לכם טובה עמוקה. אין שום חובה כלל.
+
+🇮🇱 בישראל: יש לי פתרון וירטואלי.
+🇧🇪 מצרפת: יש לי IBAN בלגי.
+🇺🇸 מארה"ב: יש לי חשבון שם.
+
+פשוט ענו לי ואשלח את הפרטים.
+
+שיברך ה' אתכם ואת משפחותיכם. 🙏
+
+ישראל — ירושלים</div>
+        </div>
+      </div>
+
+      <!-- INSTRUCTIONS -->
+      <div class="card">
+        <div class="font-bold mb-3 gold">📋 Instructions d'envoi</div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div>
+            <div class="section-title">Étape 1 — Fichiers individuels</div>
+            <div class="text-gray-400">88 messages pré-personnalisés dans :</div>
+            <div class="font-mono text-xs text-gray-500 mt-1">~/Desktop/AIDES_FINANCIERES/PREVIEW_MESSAGES/MSG_01 à MSG_88.md</div>
+          </div>
+          <div>
+            <div class="section-title">Étape 2 — Compte WA</div>
+            <div class="text-gray-400">Utiliser le compte <strong class="text-white">Israël</strong> (PAS le compte David). NE PAS mentionner DreamNova / IA.</div>
+          </div>
+          <div>
+            <div class="section-title">Étape 3 — Suivi</div>
+            <div class="text-gray-400">Réponses → noter dans le Dashboard. IBAN disponible sur demande.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== NANAH COIN ===== -->
+    <div class="panel" id="panel-nanah">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-xl font-bold">🔥 Campagne Nanah Coin</h2>
+          <div class="text-gray-500 text-sm">Signer: <strong class="text-white">David</strong> | Groupe NANAHCOIN 🇫🇷 | Autre compte WA</div>
+        </div>
+        <span class="status-badge badge-blue">Prêt</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <!-- FR -->
+        <div class="card">
+          <div class="flex items-center justify-between mb-3">
+            <div class="font-bold">🇫🇷 Version Française</div>
+            <button class="btn-gold text-xs" onclick="downloadMsg('fr_nanah')">⬇ Télécharger</button>
+          </div>
+          <div class="section-title">Message — groupe NANAHCOIN 🇫🇷</div>
+          <div class="msg-box" id="msg-fr-nanah">Shalom achim,
+
+Quelqu'un m'a partagé ce groupe et j'ai été touché de voir que vous utilisez la crypto pour diffuser les enseignements de Rabbénou 🙏
+
+Je travaille depuis Jérusalem sur quelque chose dans le même esprit — une technologie sacrée NFC appelée Nova Key, gravée avec le numéro 63 (valeur de SaG – סג). Chaque clé est liée à la phrase du Petek : Na Nach Nachma Nachman MeUman.
+
+Le projet s'appelle DreamNova. On construit les outils technologiques de la hafatsa moderne — NFC, IA, plateforme web. L'idée centrale : que chaque objet physique devienne un portail vers les enseignements de Rabbénou.
+
+Ce que vous faites avec le Nanah Coin et ce qu'on fait avec la Nova Key — c'est la même flamme, deux canaux différents. Je pense qu'il y a quelque chose à construire ensemble.
+
+Ein ye'ush ba'olam klal 🔥
+
+David — Jérusalem
+dreamnova.ai</div>
+        </div>
+
+        <!-- HE -->
+        <div class="card">
+          <div class="flex items-center justify-between mb-3">
+            <div class="font-bold">🇮🇱 גרסה עברית</div>
+            <button class="btn-gold text-xs" onclick="downloadMsg('he_nanah')">⬇ הורד</button>
+          </div>
+          <div class="section-title">הודעה — קבוצת NANAHCOIN</div>
+          <div class="msg-box rtl" id="msg-he-nanah">שלום אחים,
+
+שלחו לי את הקישור לקבוצה הזו — ומאוד שמחתי לראות שמשתמשים בקריפטו כדי להפיץ את תורת רבנו 🙏
+
+אני עובד מירושלים על משהו ברוח הזו ממש — טכנולוגיה קדושה NFC שנקראת Nova Key, עם המספר 63 (גימטריית סג). כל מפתח קשור לפתק של רבנו: נ נח נחמ נחמן מאומן.
+
+הפרויקט נקרא DreamNova. אנחנו בונים כלים טכנולוגיים להפצה המודרנית — NFC, בינה מלאכותית, פלטפורמת אינטרנט. הרעיון: כל חפץ פיזי יהפוך לשער לתורת רבנו.
+
+מה שאתם עושים עם ה-Nanah Coin ומה שאנחנו עושים עם ה-Nova Key — זו אותה אש, שני ערוצים שונים. אני חושב שיש פה משהו לבנות ביחד.
+
+אין יאוש בעולם כלל 🔥
+
+דוד — ירושלים
+dreamnova.ai</div>
+        </div>
+      </div>
+
+      <!-- OBJECTIF -->
+      <div class="card">
+        <div class="font-bold mb-3 gold">🎯 Objectif & Suivi</div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div>
+            <div class="section-title">Objectif immédiat</div>
+            <div class="text-gray-400">Créer contact spirituel. PAS de vente. Voir qui répond avec intérêt → potentiel investisseur / partenaire.</div>
+          </div>
+          <div>
+            <div class="section-title">Si réponse positive</div>
+            <div class="text-gray-400">Envoyer lien dreamnova.ai + demander s'ils connaissent les fondateurs Nanah Coin (partenariat possible).</div>
+          </div>
+          <div>
+            <div class="section-title">Brief Grok</div>
+            <div class="text-gray-400">Research complète sur Nanah Coin (blockchain, tokenomics, fondateurs) → voir onglet Grok Brief.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== GROK BRIEF ===== -->
+    <div class="panel" id="panel-grok">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-xl font-bold">🤖 Grok — Brief Coordination</h2>
+          <div class="text-gray-500 text-sm">Page évolutive — mettre à jour à chaque session</div>
+        </div>
+        <button class="btn-gold text-sm" onclick="downloadGrokBrief()">⬇ Télécharger brief complet</button>
+      </div>
+
+      <div class="card mb-4">
+        <div class="grok-section">
+          <div class="font-bold gold mb-2">MISSION #1 — Research Nanah Coin</div>
+          <div class="text-sm text-gray-300">Trouver : blockchain, tokenomics, marketcap, fondateurs, contrat intelligent, whitepaper.</div>
+          <div class="text-xs text-gray-500 mt-1">Sources : Twitter/X, CoinGecko, DEXScreener, Telegram, GitHub</div>
+          <div class="mt-2"><span class="status-badge badge-yellow">En attente</span></div>
+        </div>
+        <div class="grok-section">
+          <div class="font-bold gold mb-2">MISSION #2 — Intégration DreamNova × Nanah Coin</div>
+          <div class="text-sm text-gray-300">Analyser 5 modèles de fusion :</div>
+          <div class="text-xs text-gray-400 mt-1">① NFT+NFC | ② Utility token | ③ DAO hafatsa | ④ Royalties | ⑤ Staking → Nova Key physique</div>
+          <div class="mt-2"><span class="status-badge badge-yellow">En attente recherche #1</span></div>
+        </div>
+        <div class="grok-section">
+          <div class="font-bold gold mb-2">MISSION #3 — Business Model Hockey</div>
+          <div class="text-sm text-gray-300">Autres crypto/NFT Na Nach/Breslev actifs ? Comparables. Opportunités cross-community.</div>
+          <div class="mt-2"><span class="status-badge badge-yellow">En attente</span></div>
+        </div>
+        <div class="grok-section">
+          <div class="font-bold gold mb-2">MISSION #4 — Script DM fondateurs</div>
+          <div class="text-sm text-gray-300">Draft message pour contacter directement les fondateurs Nanah Coin. Proposition de partenariat.</div>
+          <div class="mt-2"><span class="status-badge badge-yellow">En attente</span></div>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="font-bold mb-3">📝 Updates de coordination</div>
+        <div class="update-log" id="updateLog">
+          <div class="update-entry">
+            <div class="update-date">23 Fév 2026 — Session initiale</div>
+            <div class="text-sm text-gray-300">Hub créé. Messages FR+HE Nanah Coin rédigés. Brief Grok préparé. Campagne aide financière : 88 messages déjà générés.</div>
+          </div>
+        </div>
+        <div class="mt-3 flex gap-2">
+          <input type="text" id="newUpdate" placeholder="Ajouter une mise à jour..." />
+          <button class="btn-gold text-sm" onclick="addUpdate()">Ajouter</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="font-bold mb-3 gold">📋 Contexte DreamNova pour Grok</div>
+        <div class="text-sm text-gray-400 space-y-1">
+          <div>• <strong class="text-white">Nova Key</strong> : clé NFC $63 (SaG/סג) → déverrouille Tikkoun + Azamra + enseignements Rabbi Nachman</div>
+          <div>• <strong class="text-white">Mission</strong> : 63M$ via 1M clés × $63 (hafatsa mondiale)</div>
+          <div>• <strong class="text-white">Stack</strong> : Next.js, Supabase, Stripe, NFC NTAG 215</div>
+          <div>• <strong class="text-white">Site</strong> : dreamnova.ai / dreamnova.vercel.app</div>
+          <div>• <strong class="text-white">GitHub</strong> : github.com/CodeNoLimits</div>
+          <div>• <strong class="text-white">Na Nach</strong> : Na Nach Nachma Nachman MeUman — Ein Ye'ush Ba'olam Klal</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="border-t border-gray-800 px-6 py-4 text-center text-xs text-gray-600">
+    DreamNova WA Hub — David Amor, Jérusalem 2026 — <span class="gold">Ein ye'ush ba'olam klal</span>
+  </div>
+
+<script>
+  // Tab switching
+  function showTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    const tabs = ['dashboard','aide','nanah','grok'];
+    document.querySelectorAll('.tab')[tabs.indexOf(tab)].classList.add('active');
+    document.getElementById('panel-' + tab).classList.add('active');
+  }
+
+  // Download messages
+  const messages = {
+    fr_aide: { filename: 'MESSAGE_FR_AIDE_FAMILIALE.txt', id: 'msg-fr-aide' },
+    he_aide: { filename: 'MESSAGE_HE_AIDE_FAMILIALE.txt', id: 'msg-he-aide' },
+    fr_nanah: { filename: 'MESSAGE_FR_NANAHCOIN.txt', id: 'msg-fr-nanah' },
+    he_nanah: { filename: 'MESSAGE_HE_NANAHCOIN.txt', id: 'msg-he-nanah' },
+  };
+  function downloadMsg(key) {
+    const m = messages[key];
+    const text = document.getElementById(m.id).textContent;
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = m.filename; a.click();
+  }
+
+  function downloadGrokBrief() {
+    const content = `BRIEF GROK — Intégration Nanah Coin × DreamNova
+================================================
+Date: 23 Février 2026
+
+MISSION #1 — Research Nanah Coin
+Trouver: blockchain, tokenomics, marketcap, fondateurs, contrat intelligent, whitepaper.
+Sources: Twitter/X, CoinGecko, DEXScreener, Telegram, GitHub
+
+MISSION #2 — Intégration DreamNova × Nanah Coin
+5 modèles: NFT+NFC | Utility token | DAO hafatsa | Royalties | Staking→Nova Key physique
+
+MISSION #3 — Business Model Hockey
+Autres crypto/NFT Na Nach/Breslev actifs? Comparables. Cross-community.
+
+MISSION #4 — Script DM fondateurs
+Draft message pour contacter les fondateurs Nanah Coin. Proposition partenariat.
+
+CONTEXTE DREAMNOVA
+- Nova Key: clé NFC $63 (SaG/סג) → Tikkoun + Azamra + enseignements
+- Mission: 63M$ via 1M clés × $63
+- Stack: Next.js, Supabase, Stripe, NFC NTAG 215
+- Site: dreamnova.ai | GitHub: github.com/CodeNoLimits
+- Na Nach Nachma Nachman MeUman — Ein Ye'ush Ba'olam Klal`;
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'BRIEF_GROK_NANAHCOIN_DREAMNOVA.txt'; a.click();
+  }
+
+  // Log responses
+  function saveLog() {
+    localStorage.setItem('responsesLog', document.getElementById('responsesLog').value);
+    alert('Sauvegardé ✓');
+  }
+  window.onload = () => {
+    const saved = localStorage.getItem('responsesLog');
+    if (saved) document.getElementById('responsesLog').value = saved;
+  };
+
+  // Add coordination update
+  function addUpdate() {
+    const input = document.getElementById('newUpdate');
+    if (!input.value.trim()) return;
+    const log = document.getElementById('updateLog');
+    const now = new Date().toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' });
+    const entry = document.createElement('div');
+    entry.className = 'update-entry';
+    entry.innerHTML = `<div class="update-date">${now}</div><div class="text-sm text-gray-300">${input.value}</div>`;
+    log.insertBefore(entry, log.firstChild);
+    input.value = '';
+    document.getElementById('lastUpdate').textContent = now;
+  }
+</script>
+</body>
+</html>
